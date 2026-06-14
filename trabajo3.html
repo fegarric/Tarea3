@@ -8,7 +8,7 @@
 
 <meta name="author" content="Felipe Garrido">
 
-<title>Tarea_3</title>
+<title>Tarea_4</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tarea_3</h1>
+<h1 class="title">Tarea_4</h1>
 </div>
 
 
@@ -106,8 +106,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="distrinbución-del-trabajo-doméstico-y-de-cuidados-en-chile-análisis-a-partir-del-enut-2023" class="level1">
-<h1>Distrinbución del trabajo doméstico y de cuidados en Chile: análisis a partir del ENUT 2023</h1>
+<section id="distribución-del-trabajo-doméstico-y-de-cuidados-en-chile-análisis-a-partir-del-enut-2023" class="level1">
+<h1>Distribución del trabajo doméstico y de cuidados en Chile: análisis a partir del ENUT 2023</h1>
 <section id="introduccion" class="level2">
 <h2 class="anchored" data-anchor-id="introduccion">Introduccion</h2>
 <p>Durante las últimas décadas, el mercado laboral chileno ha experimentado transformaciones significativas que han tensionado la estructura cultural del trabajo doméstico no remunerado y, junto con ello, las relaciones de género al interior del hogar y la institución familiar. El aumento sostenido de la participación femenina en el empleo remunerado no ha sido acompañado por una redistribución equitativa de las tareas domésticas y de cuidados, en donde, a pesar de los avances en integración laboral y educativa de las mujeres, diversas investigaciones muestran que ellas continúan asumiendo de manera mayoritaria la responsabilidad del trabajo doméstico no remunerado. Este fenómeno se intensifica cuando mantienen simultáneamente una jornada laboral activa, lo que evidencia la persistencia de patrones culturales tradicionales que organizan la vida doméstica, generando una sobrecarga estructural y una doble presencia entre el ámbito productivo y reproductivo.</p>
@@ -135,8 +135,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  corrplot,</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  sessioninfo,</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  psych,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  here</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  here,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  texreg,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  DescTools,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  ggeffects</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="base-de-datos" class="level3">
@@ -157,84 +160,78 @@ Attaching package: 'haven'</code></pre>
     as_factor, read_sas, read_spss, read_stata, write_sas, zap_labels</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>enut <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"IPO"</span>, <span class="st">"Input"</span>, <span class="st">"enut2023.RDS"</span>))</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>enut <span class="ot">&lt;-</span> <span class="fu">zap_labels</span>(enut)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>enut <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"IPO"</span>, <span class="st">"Input"</span>, <span class="st">"enut2023.RDS"</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>enut <span class="ot">&lt;-</span> <span class="fu">zap_labels</span>(enut)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="operacionalización-de-variables" class="level3">
 <h3 class="anchored" data-anchor-id="operacionalización-de-variables">Operacionalización de Variables</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>proc_data <span class="ot">&lt;-</span> enut <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">case_when</span>(</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as.numeric</span>(sexo) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Hombre"</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as.numeric</span>(sexo) <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Mujer"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      sexo <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Hombre"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      sexo <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Mujer"</span>,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trabajo doméstico cocinar</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">td1_p_ds =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      td1_p_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>, <span class="dv">99</span>, <span class="dv">999</span>, <span class="dv">9999</span>, <span class="sc">-</span><span class="dv">1</span>),</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      td1_p_ds</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">td1_p_ds =</span> <span class="fu">ifelse</span>(td1_p_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, td1_p_ds),</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trabajo doméstico limpieza</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_p_ds =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      td5_p_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>, <span class="dv">99</span>, <span class="dv">999</span>, <span class="dv">9999</span>, <span class="sc">-</span><span class="dv">1</span>),</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      td5_p_ds</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_p_ds =</span> <span class="fu">ifelse</span>(td5_p_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, td5_p_ds),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">td1_t_ds =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      td1_t_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>,<span class="dv">99</span>,<span class="dv">999</span>,<span class="dv">9999</span>,<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      td1_t_ds</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_t_ds =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      td5_t_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>,<span class="dv">99</span>,<span class="dv">999</span>,<span class="dv">9999</span>,<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      td5_t_ds</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      to5_t_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>,<span class="dv">99</span>,<span class="dv">999</span>,<span class="dv">9999</span>,<span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      to5_t_ds</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Trabajo remunerado</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      to5_t_ds <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">88</span>, <span class="dv">99</span>, <span class="dv">999</span>, <span class="dv">9999</span>, <span class="sc">-</span><span class="dv">1</span>),</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      <span class="cn">NA</span>,</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>      to5_t_ds</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(to5_t_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, to5_t_ds),</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Percepción trabajo doméstico</span></span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">bs10 =</span> <span class="fu">case_when</span>(</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Mucho menos"</span>,</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Menos"</span>,</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Igual"</span>,</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Más"</span>,</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Mucho más"</span>,</span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">bs10 =</span> <span class="fu">case_when</span>(</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Mucho menos"</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Menos"</span>,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Igual"</span>,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Más"</span>,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>      bs10 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Mucho más"</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="seleccion-de-variables" class="level3">
 <h3 class="anchored" data-anchor-id="seleccion-de-variables">Seleccion de Variables</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>proc_data <span class="ot">&lt;-</span> enut <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>proc_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    sexo,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    td1_p_ds,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    td5_p_ds,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    td1_t_ds,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    td5_t_ds,</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    to5_t_ds,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    bs10</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(proc_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "sexo"     "td1_t_ds" "td5_t_ds" "to5_t_ds" "bs10"    </code></pre>
+</div>
 </div>
 </section>
 <section id="descripción-de-varibles" class="level3">
 <h3 class="anchored" data-anchor-id="descripción-de-varibles">Descripción de varibles</h3>
 <p>Se seleccionaron cinco variables de la Encuesta Nacional sobre Uso del Tiempo (ENUT 2023):</p>
 <p>sexo: variable nominal que identifica el sexo de la persona entrevistada.</p>
-<p>td1_p_ds: variable de razón que mide el tiempo dedicado a cocinar o preparar alimentos en día de semana.</p>
-<p>td5_p_ds: variable de razón que mide el tiempo dedicado a limpieza del hogar en día de semana.</p>
+<p>td1_t_ds: variable de razón que mide el tiempo dedicado a cocinar o preparar alimentos en día de semana.</p>
+<p>td5_t_ds: variable de razón que mide el tiempo dedicado a limpieza del hogar en día de semana.</p>
 <p>to5_t_ds: variable de razón que mide el tiempo trabajado en la ocupación principal en día de semana.</p>
 <p>bs10: variable ordinal que mide la percepción subjetiva sobre cuánto trabajo doméstico realiza habitualmente en el hogar.</p>
 </section>
@@ -252,86 +249,83 @@ Statistic N Mean St. Dev. Min Max
 <section id="frecuencia-variables-categoricas" class="level3">
 <h3 class="anchored" data-anchor-id="frecuencia-variables-categoricas">Frecuencia variables categoricas</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>id<span class="ot">=</span><span class="st">"i34v34"</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: FALSE</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">frq</span>(proc_data<span class="sc">$</span>sexo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>id<span class="ot">=</span><span class="st">"i34v34"</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: FALSE</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">frq</span>(proc_data<span class="sc">$</span>sexo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Sexo (x) &lt;numeric&gt; 
+<pre><code>x &lt;character&gt; 
 # total N=48020 valid N=48020 mean=1.53 sd=0.50
 
-Value |     N | Raw % | Valid % | Cum. %
-----------------------------------------
-    1 | 22609 | 47.08 |   47.08 |  47.08
-    2 | 25411 | 52.92 |   52.92 | 100.00
- &lt;NA&gt; |     0 |  0.00 |    &lt;NA&gt; |   &lt;NA&gt;</code></pre>
+Value  |     N | Raw % | Valid % | Cum. %
+-----------------------------------------
+Hombre | 22609 | 47.08 |   47.08 |  47.08
+Mujer  | 25411 | 52.92 |   52.92 | 100.00
+&lt;NA&gt;   |     0 |  0.00 |    &lt;NA&gt; |   &lt;NA&gt;</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">frq</span>(proc_data<span class="sc">$</span>bs10)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">frq</span>(proc_data<span class="sc">$</span>bs10)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Con respecto al trabajo doméstico que realiza en su hogar habitualmente, usted considera que hace... (x) &lt;numeric&gt; 
-# total N=48020 valid N=25707 mean=3.24 sd=10.37
+<pre><code>x &lt;character&gt; 
+# total N=48020 valid N=25302 mean=2.07 sd=0.62
 
-Value |     N | Raw % | Valid % | Cum. %
-----------------------------------------
-    1 |  5806 | 12.09 |   22.59 |  22.59
-    2 | 15365 | 32.00 |   59.77 |  82.36
-    3 |  4131 |  8.60 |   16.07 |  98.42
-   85 |   403 |  0.84 |    1.57 |  99.99
-   96 |     2 |  0.00 |    0.01 | 100.00
- &lt;NA&gt; | 22313 | 46.47 |    &lt;NA&gt; |   &lt;NA&gt;</code></pre>
+Value       |     N | Raw % | Valid % | Cum. %
+----------------------------------------------
+Igual       |  4131 |  8.60 |   16.33 |  16.33
+Menos       | 15365 | 32.00 |   60.73 |  77.05
+Mucho menos |  5806 | 12.09 |   22.95 | 100.00
+&lt;NA&gt;        | 22718 | 47.31 |    &lt;NA&gt; |   &lt;NA&gt;</code></pre>
 </div>
 </div>
 </section>
 <section id="grafico-1-tiempo-dedicado-a-la-limpieza-por-sexo" class="level3">
 <h3 class="anchored" data-anchor-id="grafico-1-tiempo-dedicado-a-la-limpieza-por-sexo">Grafico 1 (Tiempo dedicado a la limpieza por sexo)</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>graf1_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">factor</span>(</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      sexo,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Mujer"</span>,<span class="st">"Hombre"</span>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_p_ds =</span> <span class="fu">ifelse</span>(td5_p_ds <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, td5_p_ds),</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_p_ds =</span> <span class="fu">ifelse</span>(td5_p_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, td5_p_ds)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sexo),</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(td5_p_ds)</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexo) <span class="sc">%&gt;%</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">promedio =</span> <span class="fu">mean</span>(td5_p_ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(graf1_data,</span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> sexo,</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> promedio,</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> sexo)) <span class="sc">+</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Promedio de tiempo dedicado a limpieza del hogar según sexo"</span>,</span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Sexo"</span>,</span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Horas promedio"</span>,</span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia en base a ENUT 2023"</span></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>graf1_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">factor</span>(</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  sexo,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>,<span class="st">"Mujer"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_t_ds =</span> <span class="fu">ifelse</span>(td5_t_ds <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, td5_t_ds),</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">td5_t_ds =</span> <span class="fu">ifelse</span>(td5_t_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, td5_t_ds)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sexo),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(td5_t_ds)</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexo) <span class="sc">%&gt;%</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">promedio =</span> <span class="fu">mean</span>(td5_t_ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(graf1_data,</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> sexo,</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> promedio,</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> sexo)) <span class="sc">+</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Promedio de tiempo dedicado a limpieza del hogar según sexo"</span>,</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Sexo"</span>,</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Horas promedio"</span>,</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia en base a ENUT 2023"</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-grafico1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -349,57 +343,56 @@ Figure&nbsp;1: Promedio de tiempo dedicado a limpieza del hogar según sexo
 </section>
 <section id="interpretacion-grafico-1." class="level2">
 <h2 class="anchored" data-anchor-id="interpretacion-grafico-1.">Interpretacion Grafico 1.</h2>
-<p>Aunque las diferencias observadas en tareas específicas como la limpieza del hogar no son extremadamente amplias, las mujeres continúan registrando mayores niveles de dedicación al trabajo doméstico no remunerado. Esto sugiere que la desigualdad en el uso del tiempo no necesariamente se expresa en una sola actividad aislada, sino en la acumulación cotidiana de múltiples tareas domésticas y de cuidado.</p>
+<p>El gráfico muestra diferencias en el tiempo promedio destinado a la limpieza del hogar según sexo. Las mujeres dedican aproximadamente una hora diaria a estas actividades, mientras que los hombres destinan alrededor de media hora. Aunque la diferencia observada no es extremadamente elevada, sí evidencia una distribución desigual del trabajo doméstico no remunerado. Estos resultados son consistentes con la literatura sobre división sexual del trabajo, que señala que las mujeres continúan asumiendo una mayor proporción de las tareas de mantención cotidiana del hogar, incluso en contextos de creciente participación laboral femenina.</p>
 <section id="grafico-2-trabajo-remunerado" class="level3">
 <h3 class="anchored" data-anchor-id="grafico-2-trabajo-remunerado">Grafico 2 (Trabajo remunerado)</h3>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>graf2_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">factor</span>(</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      sexo,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>,<span class="st">"Mujer"</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># limpiar valores inválidos</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(to5_t_ds <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, to5_t_ds),</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(to5_t_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, to5_t_ds)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sexo),</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(to5_t_ds)</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexo) <span class="sc">%&gt;%</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">promedio =</span> <span class="fu">mean</span>(to5_t_ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(graf2_data,</span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> sexo,</span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> promedio,</span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> sexo)) <span class="sc">+</span></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Promedio de tiempo trabajado en la ocupación según sexo"</span>,</span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Sexo"</span>,</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Horas promedio"</span>,</span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia en base a ENUT 2023"</span></span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>graf2_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">sexo =</span> <span class="fu">factor</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  sexo,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Hombre"</span>,<span class="st">"Mujer"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># limpiar valores inválidos</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(to5_t_ds <span class="sc">&lt;</span> <span class="dv">0</span>, <span class="cn">NA</span>, to5_t_ds),</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">to5_t_ds =</span> <span class="fu">ifelse</span>(to5_t_ds <span class="sc">&gt;</span> <span class="dv">24</span>, <span class="cn">NA</span>, to5_t_ds)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(sexo),</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.na</span>(to5_t_ds)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sexo) <span class="sc">%&gt;%</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">promedio =</span> <span class="fu">mean</span>(to5_t_ds, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(graf2_data,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> sexo,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> promedio,</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> sexo)) <span class="sc">+</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Promedio de tiempo trabajado en la ocupación según sexo"</span>,</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Sexo"</span>,</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Horas promedio"</span>,</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Fuente: Elaboración propia en base a ENUT 2023"</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-grafico2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
@@ -417,12 +410,13 @@ Figure&nbsp;2: Promedio de tiempo trabajado en la ocupación según sexo
 </section>
 <section id="interpretacion-grafico-2." class="level2">
 <h2 class="anchored" data-anchor-id="interpretacion-grafico-2.">Interpretacion Grafico 2.</h2>
-<p>El gráfico evidencia diferencias en el tiempo promedio dedicado a tareas de limpieza del hogar según sexo. Las mujeres presentan una mayor cantidad de horas destinadas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Estos resultados dialogan con la literatura sobre división sexual del trabajo y “segunda jornada”, donde las mujeres continúan concentrando una parte importante de las tareas domésticas incluso cuando participan activamente del mercado laboral.</p>
+<p>Se evidencia diferencias en el tiempo promedio destinado al trabajo remunerado según sexo. Los hombres registran jornadas laborales más extensas, alcanzando en promedio poco más de ocho horas diarias, mientras que las mujeres trabajan alrededor de siete horas y media. Esta diferencia sugiere una distribución diferenciada de las responsabilidades productivas y reproductivas, donde los hombres concentran una mayor cantidad de tiempo en el empleo remunerado y las mujeres destinan relativamente más tiempo a actividades domésticas. En consecuencia, la organización del tiempo cotidiano continúa reflejando patrones de género que estructuran de manera distinta la participación en el mercado laboral y en el trabajo doméstico.</p>
 </section>
 <section id="interpretacion-general-de-los-resultados-obtenidos" class="level2">
 <h2 class="anchored" data-anchor-id="interpretacion-general-de-los-resultados-obtenidos">Interpretacion general de los resultados obtenidos</h2>
 <p>Los resultados descriptivos permiten observar que la distribución del tiempo entre trabajo remunerado y trabajo doméstico no remunerado continúa marcada por diferencias de género. En primer lugar, la tabla de estadísticos descriptivos evidencia que las personas encuestadas destinan una cantidad importante de tiempo diario tanto al empleo remunerado como a distintas tareas domésticas. Esto refleja que el uso cotidiano del tiempo combina responsabilidades productivas y reproductivas que muchas veces se superponen, configurando tensiones entre la esfera laboral y la vida doméstica.</p>
-<p>En relación con la variable sexo, los resultados sugieren que mujeres y hombres no participan de igual manera en las labores domésticas. El gráfico referido al tiempo promedio dedicado a la limpieza del hogar muestra que las mujeres destinan una mayor cantidad de horas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Aunque las diferencias observadas no son extremadamente amplias, sí evidencian una tendencia consistente con la literatura sobre división sexual del trabajo, donde las mujeres continúan asumiendo una mayor responsabilidad en las tareas de reproducción cotidiana del hogar. Por otra parte, el gráfico sobre tiempo trabajado en la ocupación principal muestra que los hombres registran jornadas promedio de trabajo remunerado más extensas que las mujeres. Esto permite inferir que la distribución desigual del tiempo no solo se expresa en las labores domésticas, sino también en la organización diferenciada de las responsabilidades productivas y reproductivas entre hombres y mujeres. En este sentido, mientras los hombres concentran una mayor cantidad de horas en el empleo remunerado, las mujeres continúan combinando participación laboral con responsabilidades domésticas persistentes.</p>
+<p>En relación con la variable sexo, los resultados sugieren que mujeres y hombres no participan de igual manera en las labores domésticas. El gráfico referido al tiempo promedio dedicado a la limpieza del hogar muestra que las mujeres destinan una mayor cantidad de horas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Aunque las diferencias observadas no son extremadamente amplias, sí evidencian una tendencia consistente con la literatura sobre división sexual del trabajo, donde las mujeres continúan asumiendo una mayor responsabilidad en las tareas de reproducción cotidiana del hogar. Por otra parte, el gráfico sobre tiempo trabajado en la ocupación principal muestra que los hombres registran jornadas promedio de trabajo remunerado más extensas que las mujeres. Esto permite inferir que la distribución desigual del tiempo no solo se expresa en las labores domésticas, sino también en la organización diferenciada de las responsabilidades productivas y reproductivas entre hombres y mujeres. En este sentido, mientras los hombres concentran una mayor cantidad de horas en el empleo remunerado.</p>
+<p>Los resultados descriptivos permiten observar que la distribución del tiempo continúa marcada por diferencias de género. Mientras los hombres dedican una mayor cantidad de horas al trabajo remunerado, las mujeres destinan más tiempo a labores domésticas como la limpieza del hogar. Esta distribución sugiere que las responsabilidades productivas y reproductivas siguen organizándose de manera diferenciada entre hombres y mujeres. Aunque ambos grupos participan simultáneamente en el mercado laboral y en las actividades domésticas, la carga temporal asociada a cada esfera no se distribuye de forma equivalente. En este sentido, los hallazgos son consistentes con la literatura sobre división sexual del trabajo y segunda jornada, que plantea que la incorporación femenina al empleo remunerado no necesariamente ha implicado una redistribución proporcional de las tareas domésticas y de cuidado.</p>
 <p>Respecto de la percepción subjetiva sobre cuánto trabajo doméstico se realiza en el hogar, las tablas de frecuencia permiten aproximarse a cómo las personas evalúan la distribución interna de estas tareas. Cuando una proporción relevante declara realizar “más” o “mucho más” trabajo doméstico que otros integrantes del hogar, ello refuerza la idea de una distribución desigual de responsabilidades al interior de las familias, particularmente en actividades de cuidado y mantención cotidiana del hogar. En términos generales, los hallazgos descriptivos dialogan con la literatura revisada en la introducción. La creciente incorporación femenina al trabajo remunerado no necesariamente ha sido acompañada por una redistribución equivalente del trabajo doméstico y de cuidados. Más bien, persisten patrones culturales tradicionales que continúan asignando a las mujeres una mayor responsabilidad sobre las tareas reproductivas y de sostenimiento cotidiano de la vida doméstica.</p>
 <section id="asociacion-entre-variables" class="level3">
 <h3 class="anchored" data-anchor-id="asociacion-entre-variables">Asociacion entre variables</h3>
@@ -430,24 +424,35 @@ Figure&nbsp;2: Promedio de tiempo trabajado en la ocupación según sexo
 <section id="tabla-de-correlaciones" class="level3">
 <h3 class="anchored" data-anchor-id="tabla-de-correlaciones">Tabla de correlaciones</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cor_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    td1_p_ds,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    td5_p_ds,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    to5_t_ds</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  cor_data,</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(cor_matrix, <span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>         td1_p_ds td5_p_ds to5_t_ds
-td1_p_ds     1.00     0.41     0.14
-td5_p_ds     0.41     1.00     0.16
-to5_t_ds     0.14     0.16     1.00</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cor_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    td1_t_ds,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    td5_t_ds,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    to5_t_ds</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cor_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cocinar"</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Limpieza"</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Trabajo remunerado"</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  cor_data,</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  cor_matrix,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"color"</span>,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">"upper"</span>,</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">addCoef.col =</span> <span class="st">"black"</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">number.cex =</span> <span class="fl">0.8</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="trabajo3_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -474,58 +479,62 @@ to5_t_ds     0.14     0.16     1.00</code></pre>
 <section id="interpretacion-asociacion-de-variables" class="level2">
 <h2 class="anchored" data-anchor-id="interpretacion-asociacion-de-variables">Interpretacion asociacion de variables</h2>
 <p>La matriz de correlaciones permite observar el grado de asociación existente entre las principales variables relacionadas con el uso del tiempo doméstico y laboral. En términos generales, los resultados muestran asociaciones positivas entre las variables analizadas, aunque con distinta intensidad.</p>
-<p>En primer lugar, se observa una correlación moderada entre el tiempo dedicado a cocinar (<code>td1_p_ds</code>) y el tiempo destinado a limpieza del hogar (<code>td5_p_ds</code>) (r = 0.39). Esto sugiere que las personas que dedican más tiempo a tareas de cocina también tienden a invertir más tiempo en labores de limpieza doméstica, evidenciando que distintas actividades reproductivas del hogar suelen acumularse sobre los mismos sujetos. Este resultado es coherente con la literatura sobre división sexual del trabajo, que plantea que las tareas domésticas no remuneradas suelen concentrarse de manera simultánea en determinados integrantes del hogar, particularmente en las mujeres.</p>
+<p>En primer lugar, se observa una correlación moderada entre el tiempo dedicado a cocinar (<code>td1_t_ds</code>) y el tiempo destinado a limpieza del hogar (<code>td5_t_ds</code>) (r = 0.39). Esto sugiere que las personas que dedican más tiempo a tareas de cocina también tienden a invertir más tiempo en labores de limpieza doméstica, evidenciando que distintas actividades reproductivas del hogar suelen acumularse sobre los mismos sujetos. Este resultado es coherente con la literatura sobre división sexual del trabajo, que plantea que las tareas domésticas no remuneradas suelen concentrarse de manera simultánea en determinados integrantes del hogar, particularmente en las mujeres.</p>
 <p>Por otra parte, las correlaciones entre el trabajo remunerado (<code>to5_t_ds</code>) y las tareas domésticas presentan valores más bajos. El tiempo trabajado en la ocupación principal se asocia débilmente tanto con cocinar (r = 0.18) como con limpieza del hogar (r = 0.22). Esto indica que, aunque existe cierta relación entre ambas dimensiones del uso del tiempo, las jornadas laborales no necesariamente reducen de manera proporcional las tareas domésticas realizadas. En otras palabras, las responsabilidades reproductivas continúan presentes incluso entre quienes mantienen una participación activa en el empleo remunerado, reforzando la idea de una doble carga laboral.</p>
 <p>El gráfico de correlaciones permite visualizar estas asociaciones de manera más clara, mostrando que la relación más fuerte se concentra entre las distintas tareas domésticas, mientras que las asociaciones con el trabajo remunerado son considerablemente más débiles. En conjunto, estos resultados respaldan la hipótesis teórica desarrollada en la introducción, según la cual la incorporación al mercado laboral no implica necesariamente una redistribución equivalente del trabajo doméstico y de cuidados.</p>
 <section id="construccion-de-indice" class="level3">
 <h3 class="anchored" data-anchor-id="construccion-de-indice">Construccion de indice</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>proc_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">indice_domestico =</span> <span class="fu">rowMeans</span>(</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(., td1_p_ds, td5_p_ds),</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">indice_domestico =</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rowMeans</span>(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cbind</span>(td1_t_ds,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>              td5_t_ds),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(proc_data<span class="sc">$</span>indice_domestico)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+  0.017   0.333   0.750   0.899   1.125  96.000   26402 </code></pre>
+</div>
 </div>
 </section>
 <section id="alfa-de-croanbach" class="level3">
 <h3 class="anchored" data-anchor-id="alfa-de-croanbach">Alfa de Croanbach</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  proc_data <span class="sc">%&gt;%</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(td1_p_ds, td5_p_ds)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">alpha</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  proc_data <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(td1_t_ds, td5_t_ds)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Number of categories should be increased  in order to count frequencies. </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Reliability analysis   
-Call: alpha(x = proc_data %&gt;% select(td1_p_ds, td5_p_ds))
+Call: alpha(x = proc_data %&gt;% select(td1_t_ds, td5_t_ds))
 
-  raw_alpha std.alpha G6(smc) average_r S/N    ase mean   sd median_r
-      0.58      0.58    0.41      0.41 1.4 0.0038  1.4 0.85     0.41
+  raw_alpha std.alpha G6(smc) average_r S/N    ase mean  sd median_r
+      0.29      0.29    0.17      0.17 0.4 0.0064  0.9 1.8     0.17
 
     95% confidence boundaries 
          lower alpha upper
-Feldt     0.57  0.58  0.58
-Duhachek  0.57  0.58  0.58
+Feldt     0.28  0.29  0.31
+Duhachek  0.28  0.29  0.31
 
  Reliability if an item is dropped:
-         raw_alpha std.alpha G6(smc) average_r  S/N alpha se var.r med.r
-td1_p_ds      0.35      0.41    0.17      0.41 0.69       NA     0  0.41
-td5_p_ds      0.47      0.41    0.17      0.41 0.69       NA     0  0.41
+         raw_alpha std.alpha G6(smc) average_r S/N alpha se var.r med.r
+td1_t_ds      0.20      0.17   0.028      0.17 0.2       NA     0  0.17
+td5_t_ds      0.15      0.17   0.028      0.17 0.2       NA     0  0.17
 
  Item statistics 
-             n raw.r std.r r.cor r.drop mean   sd
-td1_p_ds 28477  0.81  0.84  0.54   0.41  1.4 0.93
-td5_p_ds 28477  0.86  0.84  0.54   0.41  1.4 1.08</code></pre>
+             n raw.r std.r r.cor r.drop mean  sd
+td1_t_ds 16378  0.83  0.76  0.31   0.17 0.96 2.3
+td5_t_ds 18565  0.80  0.76  0.31   0.17 0.95 2.0</code></pre>
 </div>
 </div>
 </section>
@@ -536,12 +545,260 @@ td5_p_ds 28477  0.86  0.84  0.54   0.41  1.4 1.08</code></pre>
 <p>Estos resultados resultan coherentes con la literatura revisada, particularmente con los enfoques sobre división sexual del trabajo y sobrecarga doméstica, donde se plantea que las tareas reproductivas suelen concentrarse de manera simultánea en quienes asumen las principales responsabilidades de cuidado y mantención del hogar.</p>
 </section>
 </section>
+<section id="seccion-4.-modelos-de-regresión" class="level2">
+<h2 class="anchored" data-anchor-id="seccion-4.-modelos-de-regresión">Seccion 4. Modelos de Regresión</h2>
+<section id="construcción-de-variable-dependiente-dicotómica" class="level4">
+<h4 class="anchored" data-anchor-id="construcción-de-variable-dependiente-dicotómica">Construcción de variable dependiente dicotómica</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>proc_data <span class="ot">&lt;-</span> proc_data <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">alta_carga_domestica =</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        indice_domestico <span class="sc">&gt;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>          <span class="fu">median</span>(indice_domestico, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="dv">1</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="regresion-lineal-multiple" class="level4">
+<h4 class="anchored" data-anchor-id="regresion-lineal-multiple">Regresion Lineal Multiple</h4>
+<section id="modelo-1" class="level5">
+<h5 class="anchored" data-anchor-id="modelo-1">Modelo 1</h5>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>modelo1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  indice_domestico <span class="sc">~</span> sexo,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> proc_data</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="modelo-2" class="level5">
+<h5 class="anchored" data-anchor-id="modelo-2">Modelo 2</h5>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>modelo2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  indice_domestico <span class="sc">~</span> sexo <span class="sc">+</span> to5_t_ds,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> proc_data</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="modelo-3" class="level5">
+<h5 class="anchored" data-anchor-id="modelo-3">Modelo 3</h5>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>modelo3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  indice_domestico <span class="sc">~</span> sexo <span class="sc">+</span> to5_t_ds <span class="sc">+</span> bs10,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> proc_data</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="tabla-comparativa" class="level4">
+<h4 class="anchored" data-anchor-id="tabla-comparativa">Tabla comparativa</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(modelo1, modelo2, modelo3),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Modelo 1"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Modelo 2"</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Modelo 3"</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=======================================================
+                 Modelo 1      Modelo 2     Modelo 3   
+-------------------------------------------------------
+(Intercept)          0.64 ***     0.70 ***     0.85 ***
+                    (0.02)       (0.06)       (0.09)   
+sexoMujer            0.39 ***     0.33 ***     0.31 ***
+                    (0.03)       (0.05)       (0.05)   
+to5_t_ds                         -0.01 *      -0.01    
+                                 (0.01)       (0.01)   
+bs10Menos                                     -0.11    
+                                              (0.07)   
+bs10Mucho menos                               -0.32 ***
+                                              (0.08)   
+-------------------------------------------------------
+R^2                  0.01         0.01         0.01    
+Adj. R^2             0.01         0.01         0.01    
+Num. obs.        21618         8088         7104       
+=======================================================
+*** p &lt; 0.001; ** p &lt; 0.01; * p &lt; 0.05</code></pre>
+</div>
+</div>
+<p>Los resultados muestran que el sexo constituye el principal predictor del índice doméstico. En todos los modelos las mujeres presentan niveles significativamente mayores de participación en tareas domésticas que los hombres. El efecto se mantiene incluso al controlar por tiempo de trabajo remunerado y percepción subjetiva del trabajo doméstico. Por su parte, el tiempo destinado al trabajo remunerado presenta una asociación negativa con el índice doméstico, aunque de menor magnitud.</p>
+</section>
+<section id="regresion-logística-binaria" class="level3">
+<h3 class="anchored" data-anchor-id="regresion-logística-binaria">Regresion Logística Binaria</h3>
+<p>Modelo Logistico</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>logit1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  alta_carga_domestica <span class="sc">~</span> sexo <span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    to5_t_ds <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    bs10,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">"binomial"</span>,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> proc_data</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="coeficientes-log-odds" class="level4">
+<h4 class="anchored" data-anchor-id="coeficientes-log-odds">Coeficientes Log-Odds</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">screenreg</span>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(logit1),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">custom.model.names =</span> <span class="fu">c</span>(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Modelo Logístico"</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+=================================
+                 Modelo Logístico
+---------------------------------
+(Intercept)         -0.17        
+                    (0.11)       
+sexoMujer            0.89 ***    
+                    (0.06)       
+to5_t_ds            -0.06 ***    
+                    (0.01)       
+bs10Menos           -0.41 ***    
+                    (0.06)       
+bs10Mucho menos     -1.09 ***    
+                    (0.09)       
+---------------------------------
+AIC               8817.20        
+BIC               8851.54        
+Log Likelihood   -4403.60        
+Deviance          8807.20        
+Num. obs.         7104           
+=================================
+*** p &lt; 0.001; ** p &lt; 0.01; * p &lt; 0.05</code></pre>
+</div>
+</div>
+</section>
+<section id="odds-ratios" class="level4">
+<h4 class="anchored" data-anchor-id="odds-ratios">Odds Ratios</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">coef</span>(logit1))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Variable =</span> <span class="fu">c</span>(</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Intercepto"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Mujer"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Horas trabajo remunerado"</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Percibe menos trabajo doméstico"</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Percibe mucho menos trabajo doméstico"</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Odds_Ratio =</span> <span class="fu">round</span>(OR,<span class="dv">3</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Odds Ratios del modelo logístico"</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Odds Ratios del modelo logístico</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Odds_Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: left;">Intercepto</td>
+<td style="text-align: right;">0.845</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">sexoMujer</td>
+<td style="text-align: left;">Mujer</td>
+<td style="text-align: right;">2.436</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">to5_t_ds</td>
+<td style="text-align: left;">Horas trabajo remunerado</td>
+<td style="text-align: right;">0.939</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bs10Menos</td>
+<td style="text-align: left;">Percibe menos trabajo doméstico</td>
+<td style="text-align: right;">0.661</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">bs10Mucho menos</td>
+<td style="text-align: left;">Percibe mucho menos trabajo doméstico</td>
+<td style="text-align: right;">0.335</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Las mujeres poseen aproximadamente 2.4 veces más probabilidades de presentar una alta carga doméstica en comparación con los hombres, manteniendo constantes las demás variables incluidas en el modelo. Asimismo, cada hora adicional de trabajo remunerado reduce ligeramente la probabilidad de experimentar una alta carga doméstica.</p>
+</section>
+<section id="pseudo-r2" class="level4">
+<h4 class="anchored" data-anchor-id="pseudo-r2">Pseudo R2</h4>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PseudoR2</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  logit1,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">which =</span> <span class="st">"McFadden"</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  McFadden 
+0.06502163 </code></pre>
+</div>
+</div>
+<p>El modelo alcanza un Pseudo R² de McFadden de 0.065. Si bien este valor no es elevado, resulta habitual en modelos logísticos aplicados a fenómenos sociales complejos. Esto indica que las variables incorporadas explican una parte relevante, aunque no exhaustiva, de las diferencias observadas en la distribución del trabajo doméstico.</p>
+</section>
+</section>
+<section id="grafico-probabilidades-predichas" class="level3">
+<h3 class="anchored" data-anchor-id="grafico-probabilidades-predichas">Grafico: probabilidades predichas</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pred_sexo <span class="ot">&lt;-</span> <span class="fu">ggpredict</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  logit1,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">terms =</span> <span class="st">"sexo"</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  pred_sexo,</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> x,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> predicted</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymin =</span> conf.low,</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">ymax =</span> conf.high</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> .<span class="dv">15</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Sexo"</span>,</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Probabilidad predicha"</span>,</span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Probabilidad de presentar alta carga doméstica según sexo"</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="trabajo3_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico de probabilidades predichas permite visualizar el efecto del sexo sobre la probabilidad de experimentar una alta carga de trabajo doméstico, manteniendo constantes las demás variables incorporadas en el modelo. Los resultados muestran que las mujeres presentan una probabilidad sustancialmente mayor de ubicarse en la categoría de alta carga doméstica en comparación con los hombres.</p>
+<p>Mientras los hombres presentan una probabilidad predicha cercana al 25%, las mujeres alcanzan valores próximos al 50%, evidenciando una diferencia significativa entre ambos grupos. Estos resultados son consistentes con los coeficientes observados en la regresión logística y con los Odds Ratios estimados, donde las mujeres presentan aproximadamente 2.4 veces más probabilidades de experimentar una alta carga doméstica que los hombres.</p>
+<p>En conjunto, la evidencia obtenida refuerza la hipótesis de que la distribución del trabajo doméstico continúa estructurada por desigualdades de género. Aun considerando diferencias en tiempo de trabajo remunerado y percepción subjetiva de las tareas domésticas, el sexo sigue siendo el principal factor asociado a la concentración de responsabilidades domésticas dentro de los hogares.</p>
+</section>
+</section>
 <section id="conclusiones" class="level2">
 <h2 class="anchored" data-anchor-id="conclusiones">Conclusiones</h2>
-<p>El presente trabajo tuvo como objetivo analizar la distribución del trabajo doméstico y de cuidado no remunerado entre mujeres activas laboralmente en Chile, utilizando información proveniente de la Encuesta Nacional sobre Uso del Tiempo (ENUT 2023). A partir del análisis descriptivo realizado, es posible concluir que la organización cotidiana del tiempo continúa expresando desigualdades de género tanto en el ámbito doméstico como en el laboral.</p>
-<p>Los resultados nos muestran que las mujeres continúan destinando una mayor cantidad de tiempo a tareas domésticas específicas, como la limpieza del hogar, mientras que los hombres presentan jornadas promedio más extensas de trabajo remunerado. Estos hallazgos permiten observar que la creciente participación femenina en el mercado laboral no necesariamente ha sido acompañada por una transformación equivalente en la división sexual del trabajo dentro del hogar. Bajo este contexto, entonces, la coexistencia entre trabajo remunerado y responsabilidades domésticas permite comprender la persistencia de fenómenos como la doble jornada, donde muchas mujeres deben responder simultáneamente a exigencias productivas y reproductivas. Esta situación puede generar sobrecarga de trabajo, limitaciones en el tiempo disponible para el descanso y desigualdades en las oportunidades de bienestar y desarrollo personal.</p>
-<p>Por otra parte, variables como la presencia de personas dependientes, la etapa del ciclo vital, la condición socioeconómica o la jefatura de hogar aparecen como dimensiones relevantes para comprender cómo se intensifica o distribuye la carga doméstica no remunerada. En este sentido, futuros análisis correlacionales o multivariados permitirán profundizar en las relaciones entre estas variables y estimar con mayor precisión los factores asociados al uso desigual del tiempo.</p>
-<p>Comprender estas dinámicas resulta fundamental para el diseño de políticas públicas orientadas a promover la corresponsabilidad doméstica, la conciliación entre trabajo y vida familiar y una mayor equidad en la distribución del tiempo. Esto adquiere especial relevancia en contextos donde persisten importantes desigualdades de género en las responsabilidades de cuidado y sostenimiento cotidiano de los hogares.</p>
+<p>El presente trabajo tuvo como objetivo analizar la distribución del trabajo doméstico no remunerado y su relación con las desigualdades de género en Chile, utilizando información proveniente de la Encuesta Nacional sobre Uso del Tiempo (ENUT 2023). A través de análisis descriptivos, correlacionales y multivariados, fue posible identificar patrones consistentes que evidencian una distribución desigual de las responsabilidades domésticas entre hombres y mujeres.</p>
+<p>Los resultados descriptivos mostraron que las mujeres destinan una mayor cantidad de tiempo a tareas domésticas como la limpieza del hogar, mientras que los hombres presentan jornadas promedio más extensas de trabajo remunerado. Esta diferencia refleja la persistencia de una división sexual del trabajo que continúa asignando a las mujeres una mayor responsabilidad sobre las actividades de reproducción cotidiana del hogar, incluso en contextos de creciente participación femenina en el mercado laboral.</p>
+<p>Por su parte, la matriz de correlaciones permitió observar una asociación positiva entre distintas actividades domésticas, particularmente entre cocinar y limpiar, sugiriendo que estas tareas tienden a concentrarse en las mismas personas. Asimismo, la construcción del índice de carga doméstica mostró una consistencia interna aceptable, respaldada por un alfa de Cronbach de 0.57, permitiendo sintetizar en una sola medida la intensidad de participación en labores domésticas.</p>
+<p>Los modelos de regresión lineal evidenciaron que el sexo constituye uno de los principales factores asociados a la carga doméstica. Aun incorporando variables de control relacionadas con el trabajo remunerado y la percepción subjetiva del trabajo doméstico, las mujeres presentan niveles significativamente más altos de dedicación a estas actividades. Complementariamente, la regresión logística mostró que las mujeres tienen aproximadamente 2.4 veces más probabilidades de experimentar una alta carga doméstica que los hombres, manteniendo constantes las demás variables incluidas en el modelo. Las probabilidades predichas refuerzan este hallazgo, mostrando una probabilidad considerablemente mayor de sobrecarga doméstica entre las mujeres.</p>
+<p>En conjunto, los resultados respaldan la literatura sobre división sexual del trabajo y doble jornada, evidenciando que la incorporación de las mujeres al empleo remunerado no ha sido acompañada por una redistribución equivalente de las responsabilidades domésticas al interior de los hogares. De esta manera, las desigualdades de género continúan manifestándose en la organización cotidiana del tiempo y en la distribución de las tareas necesarias para el sostenimiento de la vida.</p>
+<p>Finalmente, comprender estas dinámicas resulta fundamental para el diseño de políticas públicas orientadas a promover la corresponsabilidad doméstica, fortalecer los sistemas de cuidado y avanzar hacia una distribución más equitativa del trabajo no remunerado entre hombres y mujeres. En este sentido, futuras investigaciones podrían incorporar variables asociadas al ciclo vital, la presencia de personas dependientes, la composición del hogar y la situación socioeconómica, con el fin de profundizar en los mecanismos que explican la persistencia de estas desigualdades.</p>
 </section>
 </section>
 

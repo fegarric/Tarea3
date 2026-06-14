@@ -1,5 +1,5 @@
 ---
-title: "Tarea_3"
+title: "Tarea_4"
 author: "Felipe Garrido"
 format: html
 editor: visual
@@ -7,7 +7,7 @@ bibliography: Tarea3-zotero.bib
 link-bibliography: True
 ---
 
-# Distrinbución del trabajo doméstico y de cuidados en Chile: análisis a partir del ENUT 2023
+# Distribución del trabajo doméstico y de cuidados en Chile: análisis a partir del ENUT 2023
 
 ## Introduccion
 
@@ -45,7 +45,10 @@ pacman::p_load(
   corrplot,
   sessioninfo,
   psych,
-  here
+  here,
+  texreg,
+  DescTools,
+  ggeffects
 )
 ```
 
@@ -58,6 +61,7 @@ options(scipen = 999)
 library(tidyverse)
 library(haven)
 library(here)
+library(DescTools)
 
 enut <- readRDS(here::here("IPO", "Input", "enut2023.RDS"))
 
@@ -68,43 +72,33 @@ enut <- zap_labels(enut)
 
 ```{r}
 proc_data <- enut %>%
-  
+
   mutate(
 
     sexo = case_when(
-      as.numeric(sexo) == 1 ~ "Hombre",
-      as.numeric(sexo) == 2 ~ "Mujer",
+      sexo == 1 ~ "Hombre",
+      sexo == 2 ~ "Mujer",
       TRUE ~ NA_character_
     ),
 
-    # Trabajo doméstico cocinar
-    td1_p_ds = ifelse(
-      td1_p_ds %in% c(88, 99, 999, 9999, -1),
+    td1_t_ds = ifelse(
+      td1_t_ds %in% c(88,99,999,9999,-1),
       NA,
-      td1_p_ds
+      td1_t_ds
     ),
 
-    td1_p_ds = ifelse(td1_p_ds > 24, NA, td1_p_ds),
-
-    # Trabajo doméstico limpieza
-    td5_p_ds = ifelse(
-      td5_p_ds %in% c(88, 99, 999, 9999, -1),
+    td5_t_ds = ifelse(
+      td5_t_ds %in% c(88,99,999,9999,-1),
       NA,
-      td5_p_ds
+      td5_t_ds
     ),
 
-    td5_p_ds = ifelse(td5_p_ds > 24, NA, td5_p_ds),
-
-    # Trabajo remunerado
     to5_t_ds = ifelse(
-      to5_t_ds %in% c(88, 99, 999, 9999, -1),
+      to5_t_ds %in% c(88,99,999,9999,-1),
       NA,
       to5_t_ds
     ),
 
-    to5_t_ds = ifelse(to5_t_ds > 24, NA, to5_t_ds),
-
-    # Percepción trabajo doméstico
     bs10 = case_when(
       bs10 == 1 ~ "Mucho menos",
       bs10 == 2 ~ "Menos",
@@ -113,22 +107,21 @@ proc_data <- enut %>%
       bs10 == 5 ~ "Mucho más",
       TRUE ~ NA_character_
     )
-
   )
 ```
 
 ### Seleccion de Variables
 
 ```{r}
-proc_data <- enut %>% 
+proc_data <- proc_data %>%
   select(
     sexo,
-    td1_p_ds,
-    td5_p_ds,
+    td1_t_ds,
+    td5_t_ds,
     to5_t_ds,
     bs10
   )
-
+names(proc_data)
 ```
 
 ### Descripción de varibles
@@ -137,9 +130,9 @@ Se seleccionaron cinco variables de la Encuesta Nacional sobre Uso del Tiempo (E
 
 sexo: variable nominal que identifica el sexo de la persona entrevistada.
 
-td1_p_ds: variable de razón que mide el tiempo dedicado a cocinar o preparar alimentos en día de semana.
+td1_t_ds: variable de razón que mide el tiempo dedicado a cocinar o preparar alimentos en día de semana.
 
-td5_p_ds: variable de razón que mide el tiempo dedicado a limpieza del hogar en día de semana.
+td5_t_ds: variable de razón que mide el tiempo dedicado a limpieza del hogar en día de semana.
 
 to5_t_ds: variable de razón que mide el tiempo trabajado en la ocupación principal en día de semana.
 
@@ -150,7 +143,7 @@ bs10: variable ordinal que mide la percepción subjetiva sobre cuánto trabajo d
 ```{r}
 #| echo: FALSE
 
-stargazer(proc_data[,c("td1_p_ds","td5_p_ds","to5_t_ds")],
+stargazer(proc_data[,c("td1_t_ds","td5_t_ds","to5_t_ds")],
 type="text",
 summary.stat = c("n","mean","sd","min","max"))
 ```
@@ -182,25 +175,24 @@ graf1_data <- proc_data %>%
   mutate(
     
     sexo = factor(
-      sexo,
-      levels = c(1,2),
-      labels = c("Mujer","Hombre")
-    ),
+  sexo,
+  levels = c("Hombre","Mujer")
+),
     
-    td5_p_ds = ifelse(td5_p_ds < 0, NA, td5_p_ds),
-    td5_p_ds = ifelse(td5_p_ds > 24, NA, td5_p_ds)
+    td5_t_ds = ifelse(td5_t_ds < 0, NA, td5_t_ds),
+    td5_t_ds = ifelse(td5_t_ds > 24, NA, td5_t_ds)
     
   ) %>%
   
   filter(
     !is.na(sexo),
-    !is.na(td5_p_ds)
+    !is.na(td5_t_ds)
   ) %>%
   
   group_by(sexo) %>%
   
   summarise(
-    promedio = mean(td5_p_ds, na.rm = TRUE)
+    promedio = mean(td5_t_ds, na.rm = TRUE)
   )
 
 ggplot(graf1_data,
@@ -227,7 +219,7 @@ ggplot(graf1_data,
 
 ## Interpretacion Grafico 1.
 
-Aunque las diferencias observadas en tareas específicas como la limpieza del hogar no son extremadamente amplias, las mujeres continúan registrando mayores niveles de dedicación al trabajo doméstico no remunerado. Esto sugiere que la desigualdad en el uso del tiempo no necesariamente se expresa en una sola actividad aislada, sino en la acumulación cotidiana de múltiples tareas domésticas y de cuidado.
+El gráfico muestra diferencias en el tiempo promedio destinado a la limpieza del hogar según sexo. Las mujeres dedican aproximadamente una hora diaria a estas actividades, mientras que los hombres destinan alrededor de media hora. Aunque la diferencia observada no es extremadamente elevada, sí evidencia una distribución desigual del trabajo doméstico no remunerado. Estos resultados son consistentes con la literatura sobre división sexual del trabajo, que señala que las mujeres continúan asumiendo una mayor proporción de las tareas de mantención cotidiana del hogar, incluso en contextos de creciente participación laboral femenina.
 
 ### Grafico 2 (Trabajo remunerado)
 
@@ -244,10 +236,9 @@ graf2_data <- proc_data %>%
   mutate(
     
     sexo = factor(
-      sexo,
-      levels = c(1,2),
-      labels = c("Hombre","Mujer")
-    ),
+  sexo,
+  levels = c("Hombre","Mujer")
+),
     
     # limpiar valores inválidos
     to5_t_ds = ifelse(to5_t_ds < 0, NA, to5_t_ds),
@@ -290,13 +281,15 @@ ggplot(graf2_data,
 
 ## Interpretacion Grafico 2.
 
-El gráfico evidencia diferencias en el tiempo promedio dedicado a tareas de limpieza del hogar según sexo. Las mujeres presentan una mayor cantidad de horas destinadas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Estos resultados dialogan con la literatura sobre división sexual del trabajo y “segunda jornada”, donde las mujeres continúan concentrando una parte importante de las tareas domésticas incluso cuando participan activamente del mercado laboral.
+Se evidencia diferencias en el tiempo promedio destinado al trabajo remunerado según sexo. Los hombres registran jornadas laborales más extensas, alcanzando en promedio poco más de ocho horas diarias, mientras que las mujeres trabajan alrededor de siete horas y media. Esta diferencia sugiere una distribución diferenciada de las responsabilidades productivas y reproductivas, donde los hombres concentran una mayor cantidad de tiempo en el empleo remunerado y las mujeres destinan relativamente más tiempo a actividades domésticas. En consecuencia, la organización del tiempo cotidiano continúa reflejando patrones de género que estructuran de manera distinta la participación en el mercado laboral y en el trabajo doméstico.
 
 ## Interpretacion general de los resultados obtenidos
 
 Los resultados descriptivos permiten observar que la distribución del tiempo entre trabajo remunerado y trabajo doméstico no remunerado continúa marcada por diferencias de género. En primer lugar, la tabla de estadísticos descriptivos evidencia que las personas encuestadas destinan una cantidad importante de tiempo diario tanto al empleo remunerado como a distintas tareas domésticas. Esto refleja que el uso cotidiano del tiempo combina responsabilidades productivas y reproductivas que muchas veces se superponen, configurando tensiones entre la esfera laboral y la vida doméstica.
 
-En relación con la variable sexo, los resultados sugieren que mujeres y hombres no participan de igual manera en las labores domésticas. El gráfico referido al tiempo promedio dedicado a la limpieza del hogar muestra que las mujeres destinan una mayor cantidad de horas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Aunque las diferencias observadas no son extremadamente amplias, sí evidencian una tendencia consistente con la literatura sobre división sexual del trabajo, donde las mujeres continúan asumiendo una mayor responsabilidad en las tareas de reproducción cotidiana del hogar. Por otra parte, el gráfico sobre tiempo trabajado en la ocupación principal muestra que los hombres registran jornadas promedio de trabajo remunerado más extensas que las mujeres. Esto permite inferir que la distribución desigual del tiempo no solo se expresa en las labores domésticas, sino también en la organización diferenciada de las responsabilidades productivas y reproductivas entre hombres y mujeres. En este sentido, mientras los hombres concentran una mayor cantidad de horas en el empleo remunerado, las mujeres continúan combinando participación laboral con responsabilidades domésticas persistentes.
+En relación con la variable sexo, los resultados sugieren que mujeres y hombres no participan de igual manera en las labores domésticas. El gráfico referido al tiempo promedio dedicado a la limpieza del hogar muestra que las mujeres destinan una mayor cantidad de horas a este tipo de trabajo doméstico no remunerado en comparación con los hombres. Aunque las diferencias observadas no son extremadamente amplias, sí evidencian una tendencia consistente con la literatura sobre división sexual del trabajo, donde las mujeres continúan asumiendo una mayor responsabilidad en las tareas de reproducción cotidiana del hogar. Por otra parte, el gráfico sobre tiempo trabajado en la ocupación principal muestra que los hombres registran jornadas promedio de trabajo remunerado más extensas que las mujeres. Esto permite inferir que la distribución desigual del tiempo no solo se expresa en las labores domésticas, sino también en la organización diferenciada de las responsabilidades productivas y reproductivas entre hombres y mujeres. En este sentido, mientras los hombres concentran una mayor cantidad de horas en el empleo remunerado.
+
+Los resultados descriptivos permiten observar que la distribución del tiempo continúa marcada por diferencias de género. Mientras los hombres dedican una mayor cantidad de horas al trabajo remunerado, las mujeres destinan más tiempo a labores domésticas como la limpieza del hogar. Esta distribución sugiere que las responsabilidades productivas y reproductivas siguen organizándose de manera diferenciada entre hombres y mujeres. Aunque ambos grupos participan simultáneamente en el mercado laboral y en las actividades domésticas, la carga temporal asociada a cada esfera no se distribuye de forma equivalente. En este sentido, los hallazgos son consistentes con la literatura sobre división sexual del trabajo y segunda jornada, que plantea que la incorporación femenina al empleo remunerado no necesariamente ha implicado una redistribución proporcional de las tareas domésticas y de cuidado.
 
 Respecto de la percepción subjetiva sobre cuánto trabajo doméstico se realiza en el hogar, las tablas de frecuencia permiten aproximarse a cómo las personas evalúan la distribución interna de estas tareas. Cuando una proporción relevante declara realizar “más” o “mucho más” trabajo doméstico que otros integrantes del hogar, ello refuerza la idea de una distribución desigual de responsabilidades al interior de las familias, particularmente en actividades de cuidado y mantención cotidiana del hogar. En términos generales, los hallazgos descriptivos dialogan con la literatura revisada en la introducción. La creciente incorporación femenina al trabajo remunerado no necesariamente ha sido acompañada por una redistribución equivalente del trabajo doméstico y de cuidados. Más bien, persisten patrones culturales tradicionales que continúan asignando a las mujeres una mayor responsabilidad sobre las tareas reproductivas y de sostenimiento cotidiano de la vida doméstica.
 
@@ -307,17 +300,27 @@ Respecto de la percepción subjetiva sobre cuánto trabajo doméstico se realiza
 ```{r}
 cor_data <- proc_data %>%
   select(
-    td1_p_ds,
-    td5_p_ds,
+    td1_t_ds,
+    td5_t_ds,
     to5_t_ds
   )
 
+names(cor_data) <- c(
+  "Cocinar",
+  "Limpieza",
+  "Trabajo remunerado"
+)
 cor_matrix <- cor(
   cor_data,
   use = "pairwise.complete.obs"
 )
-
-round(cor_matrix, 2)
+corrplot(
+  cor_matrix,
+  method = "color",
+  type = "upper",
+  addCoef.col = "black",
+  number.cex = 0.8
+)
 ```
 
 ### Grafico de correlaciones
@@ -336,7 +339,7 @@ corrplot(
 
 La matriz de correlaciones permite observar el grado de asociación existente entre las principales variables relacionadas con el uso del tiempo doméstico y laboral. En términos generales, los resultados muestran asociaciones positivas entre las variables analizadas, aunque con distinta intensidad.
 
-En primer lugar, se observa una correlación moderada entre el tiempo dedicado a cocinar (`td1_p_ds`) y el tiempo destinado a limpieza del hogar (`td5_p_ds`) (r = 0.39). Esto sugiere que las personas que dedican más tiempo a tareas de cocina también tienden a invertir más tiempo en labores de limpieza doméstica, evidenciando que distintas actividades reproductivas del hogar suelen acumularse sobre los mismos sujetos. Este resultado es coherente con la literatura sobre división sexual del trabajo, que plantea que las tareas domésticas no remuneradas suelen concentrarse de manera simultánea en determinados integrantes del hogar, particularmente en las mujeres.
+En primer lugar, se observa una correlación moderada entre el tiempo dedicado a cocinar (`td1_t_ds`) y el tiempo destinado a limpieza del hogar (`td5_t_ds`) (r = 0.39). Esto sugiere que las personas que dedican más tiempo a tareas de cocina también tienden a invertir más tiempo en labores de limpieza doméstica, evidenciando que distintas actividades reproductivas del hogar suelen acumularse sobre los mismos sujetos. Este resultado es coherente con la literatura sobre división sexual del trabajo, que plantea que las tareas domésticas no remuneradas suelen concentrarse de manera simultánea en determinados integrantes del hogar, particularmente en las mujeres.
 
 Por otra parte, las correlaciones entre el trabajo remunerado (`to5_t_ds`) y las tareas domésticas presentan valores más bajos. El tiempo trabajado en la ocupación principal se asocia débilmente tanto con cocinar (r = 0.18) como con limpieza del hogar (r = 0.22). Esto indica que, aunque existe cierta relación entre ambas dimensiones del uso del tiempo, las jornadas laborales no necesariamente reducen de manera proporcional las tareas domésticas realizadas. En otras palabras, las responsabilidades reproductivas continúan presentes incluso entre quienes mantienen una participación activa en el empleo remunerado, reforzando la idea de una doble carga laboral.
 
@@ -346,15 +349,15 @@ El gráfico de correlaciones permite visualizar estas asociaciones de manera má
 
 ```{r}
 proc_data <- proc_data %>%
-  
   mutate(
-    
-    indice_domestico = rowMeans(
-      select(., td1_p_ds, td5_p_ds),
-      na.rm = TRUE
-    )
-    
+    indice_domestico =
+      rowMeans(
+        cbind(td1_t_ds,
+              td5_t_ds),
+        na.rm = TRUE
+      )
   )
+summary(proc_data$indice_domestico)
 ```
 
 ### Alfa de Croanbach
@@ -364,8 +367,9 @@ library(psych)
 
 alpha(
   proc_data %>%
-    select(td1_p_ds, td5_p_ds)
+    select(td1_t_ds, td5_t_ds)
 )
+
 ```
 
 ### Interpretacion indice y alfa
@@ -376,12 +380,171 @@ Los resultados muestran un Alfa de Cronbach de aproximadamente 0.56, lo que indi
 
 Estos resultados resultan coherentes con la literatura revisada, particularmente con los enfoques sobre división sexual del trabajo y sobrecarga doméstica, donde se plantea que las tareas reproductivas suelen concentrarse de manera simultánea en quienes asumen las principales responsabilidades de cuidado y mantención del hogar.
 
+## Seccion 4. Modelos de Regresión 
+
+#### Construcción de variable dependiente dicotómica
+
+```{r}
+proc_data <- proc_data %>%
+  mutate(
+    alta_carga_domestica =
+      ifelse(
+        indice_domestico >
+          median(indice_domestico, na.rm = TRUE),
+        1,
+        0
+      )
+  )
+```
+
+#### Regresion Lineal Multiple
+
+##### Modelo 1
+
+```{r}
+modelo1 <- lm(
+  indice_domestico ~ sexo,
+  data = proc_data
+)
+```
+
+##### Modelo 2
+
+```{r}
+modelo2 <- lm(
+  indice_domestico ~ sexo + to5_t_ds,
+  data = proc_data
+)
+```
+
+##### Modelo 3
+
+```{r}
+modelo3 <- lm(
+  indice_domestico ~ sexo + to5_t_ds + bs10,
+  data = proc_data
+)
+```
+
+#### Tabla comparativa 
+
+```{r}
+screenreg(
+  list(modelo1, modelo2, modelo3),
+  custom.model.names = c(
+    "Modelo 1",
+    "Modelo 2",
+    "Modelo 3"
+  )
+)
+```
+
+Los resultados muestran que el sexo constituye el principal predictor del índice doméstico. En todos los modelos las mujeres presentan niveles significativamente mayores de participación en tareas domésticas que los hombres. El efecto se mantiene incluso al controlar por tiempo de trabajo remunerado y percepción subjetiva del trabajo doméstico. Por su parte, el tiempo destinado al trabajo remunerado presenta una asociación negativa con el índice doméstico, aunque de menor magnitud.
+
+### Regresion Logística Binaria 
+
+Modelo Logistico
+
+```{r}
+logit1 <- glm(
+  alta_carga_domestica ~ sexo +
+    to5_t_ds +
+    bs10,
+  family = "binomial",
+  data = proc_data
+)
+```
+
+#### Coeficientes Log-Odds
+
+```{r}
+screenreg(
+  list(logit1),
+  custom.model.names = c(
+    "Modelo Logístico"
+  )
+)
+```
+
+#### Odds Ratios
+
+```{r}
+OR <- exp(coef(logit1))
+kable(
+  data.frame(
+    Variable = c(
+      "Intercepto",
+      "Mujer",
+      "Horas trabajo remunerado",
+      "Percibe menos trabajo doméstico",
+      "Percibe mucho menos trabajo doméstico"
+    ),
+    Odds_Ratio = round(OR,3)
+  ),
+  caption = "Odds Ratios del modelo logístico"
+)
+```
+
+Las mujeres poseen aproximadamente 2.4 veces más probabilidades de presentar una alta carga doméstica en comparación con los hombres, manteniendo constantes las demás variables incluidas en el modelo. Asimismo, cada hora adicional de trabajo remunerado reduce ligeramente la probabilidad de experimentar una alta carga doméstica.
+
+#### Pseudo R2
+
+```{r}
+PseudoR2(
+  logit1,
+  which = "McFadden"
+)
+```
+
+El modelo alcanza un Pseudo R² de McFadden de 0.065. Si bien este valor no es elevado, resulta habitual en modelos logísticos aplicados a fenómenos sociales complejos. Esto indica que las variables incorporadas explican una parte relevante, aunque no exhaustiva, de las diferencias observadas en la distribución del trabajo doméstico.
+
+### Grafico: probabilidades predichas 
+
+```{r}
+pred_sexo <- ggpredict(
+  logit1,
+  terms = "sexo"
+)
+
+ggplot(
+  pred_sexo,
+  aes(
+    x = x,
+    y = predicted
+  )
+) +
+  geom_col() +
+  geom_errorbar(
+    aes(
+      ymin = conf.low,
+      ymax = conf.high
+    ),
+    width = .15
+  ) +
+  labs(
+    x = "Sexo",
+    y = "Probabilidad predicha",
+    title = "Probabilidad de presentar alta carga doméstica según sexo"
+  ) +
+  theme_bw()
+```
+
+El gráfico de probabilidades predichas permite visualizar el efecto del sexo sobre la probabilidad de experimentar una alta carga de trabajo doméstico, manteniendo constantes las demás variables incorporadas en el modelo. Los resultados muestran que las mujeres presentan una probabilidad sustancialmente mayor de ubicarse en la categoría de alta carga doméstica en comparación con los hombres.
+
+Mientras los hombres presentan una probabilidad predicha cercana al 25%, las mujeres alcanzan valores próximos al 50%, evidenciando una diferencia significativa entre ambos grupos. Estos resultados son consistentes con los coeficientes observados en la regresión logística y con los Odds Ratios estimados, donde las mujeres presentan aproximadamente 2.4 veces más probabilidades de experimentar una alta carga doméstica que los hombres.
+
+En conjunto, la evidencia obtenida refuerza la hipótesis de que la distribución del trabajo doméstico continúa estructurada por desigualdades de género. Aun considerando diferencias en tiempo de trabajo remunerado y percepción subjetiva de las tareas domésticas, el sexo sigue siendo el principal factor asociado a la concentración de responsabilidades domésticas dentro de los hogares.
+
 ## Conclusiones
 
-El presente trabajo tuvo como objetivo analizar la distribución del trabajo doméstico y de cuidado no remunerado entre mujeres activas laboralmente en Chile, utilizando información proveniente de la Encuesta Nacional sobre Uso del Tiempo (ENUT 2023). A partir del análisis descriptivo realizado, es posible concluir que la organización cotidiana del tiempo continúa expresando desigualdades de género tanto en el ámbito doméstico como en el laboral.
+El presente trabajo tuvo como objetivo analizar la distribución del trabajo doméstico no remunerado y su relación con las desigualdades de género en Chile, utilizando información proveniente de la Encuesta Nacional sobre Uso del Tiempo (ENUT 2023). A través de análisis descriptivos, correlacionales y multivariados, fue posible identificar patrones consistentes que evidencian una distribución desigual de las responsabilidades domésticas entre hombres y mujeres.
 
-Los resultados nos muestran que las mujeres continúan destinando una mayor cantidad de tiempo a tareas domésticas específicas, como la limpieza del hogar, mientras que los hombres presentan jornadas promedio más extensas de trabajo remunerado. Estos hallazgos permiten observar que la creciente participación femenina en el mercado laboral no necesariamente ha sido acompañada por una transformación equivalente en la división sexual del trabajo dentro del hogar. Bajo este contexto, entonces, la coexistencia entre trabajo remunerado y responsabilidades domésticas permite comprender la persistencia de fenómenos como la doble jornada, donde muchas mujeres deben responder simultáneamente a exigencias productivas y reproductivas. Esta situación puede generar sobrecarga de trabajo, limitaciones en el tiempo disponible para el descanso y desigualdades en las oportunidades de bienestar y desarrollo personal.
+Los resultados descriptivos mostraron que las mujeres destinan una mayor cantidad de tiempo a tareas domésticas como la limpieza del hogar, mientras que los hombres presentan jornadas promedio más extensas de trabajo remunerado. Esta diferencia refleja la persistencia de una división sexual del trabajo que continúa asignando a las mujeres una mayor responsabilidad sobre las actividades de reproducción cotidiana del hogar, incluso en contextos de creciente participación femenina en el mercado laboral.
 
-Por otra parte, variables como la presencia de personas dependientes, la etapa del ciclo vital, la condición socioeconómica o la jefatura de hogar aparecen como dimensiones relevantes para comprender cómo se intensifica o distribuye la carga doméstica no remunerada. En este sentido, futuros análisis correlacionales o multivariados permitirán profundizar en las relaciones entre estas variables y estimar con mayor precisión los factores asociados al uso desigual del tiempo.
+Por su parte, la matriz de correlaciones permitió observar una asociación positiva entre distintas actividades domésticas, particularmente entre cocinar y limpiar, sugiriendo que estas tareas tienden a concentrarse en las mismas personas. Asimismo, la construcción del índice de carga doméstica mostró una consistencia interna aceptable, respaldada por un alfa de Cronbach de 0.57, permitiendo sintetizar en una sola medida la intensidad de participación en labores domésticas.
 
-Comprender estas dinámicas resulta fundamental para el diseño de políticas públicas orientadas a promover la corresponsabilidad doméstica, la conciliación entre trabajo y vida familiar y una mayor equidad en la distribución del tiempo. Esto adquiere especial relevancia en contextos donde persisten importantes desigualdades de género en las responsabilidades de cuidado y sostenimiento cotidiano de los hogares.
+Los modelos de regresión lineal evidenciaron que el sexo constituye uno de los principales factores asociados a la carga doméstica. Aun incorporando variables de control relacionadas con el trabajo remunerado y la percepción subjetiva del trabajo doméstico, las mujeres presentan niveles significativamente más altos de dedicación a estas actividades. Complementariamente, la regresión logística mostró que las mujeres tienen aproximadamente 2.4 veces más probabilidades de experimentar una alta carga doméstica que los hombres, manteniendo constantes las demás variables incluidas en el modelo. Las probabilidades predichas refuerzan este hallazgo, mostrando una probabilidad considerablemente mayor de sobrecarga doméstica entre las mujeres.
+
+En conjunto, los resultados respaldan la literatura sobre división sexual del trabajo y doble jornada, evidenciando que la incorporación de las mujeres al empleo remunerado no ha sido acompañada por una redistribución equivalente de las responsabilidades domésticas al interior de los hogares. De esta manera, las desigualdades de género continúan manifestándose en la organización cotidiana del tiempo y en la distribución de las tareas necesarias para el sostenimiento de la vida.
+
+Finalmente, comprender estas dinámicas resulta fundamental para el diseño de políticas públicas orientadas a promover la corresponsabilidad doméstica, fortalecer los sistemas de cuidado y avanzar hacia una distribución más equitativa del trabajo no remunerado entre hombres y mujeres. En este sentido, futuras investigaciones podrían incorporar variables asociadas al ciclo vital, la presencia de personas dependientes, la composición del hogar y la situación socioeconómica, con el fin de profundizar en los mecanismos que explican la persistencia de estas desigualdades.
