@@ -380,7 +380,7 @@ Los resultados muestran un Alfa de Cronbach de aproximadamente 0.56, lo que indi
 
 Estos resultados resultan coherentes con la literatura revisada, particularmente con los enfoques sobre división sexual del trabajo y sobrecarga doméstica, donde se plantea que las tareas reproductivas suelen concentrarse de manera simultánea en quienes asumen las principales responsabilidades de cuidado y mantención del hogar.
 
-## Seccion 4. Modelos de Regresión 
+## Seccion 4. Modelos de Regresión
 
 #### Construcción de variable dependiente dicotómica
 
@@ -426,7 +426,7 @@ modelo3 <- lm(
 )
 ```
 
-#### Tabla comparativa 
+#### Tabla comparativa
 
 ```{r}
 screenreg(
@@ -441,7 +441,7 @@ screenreg(
 
 Los resultados muestran que el sexo constituye el principal predictor del índice doméstico. En todos los modelos las mujeres presentan niveles significativamente mayores de participación en tareas domésticas que los hombres. El efecto se mantiene incluso al controlar por tiempo de trabajo remunerado y percepción subjetiva del trabajo doméstico. Por su parte, el tiempo destinado al trabajo remunerado presenta una asociación negativa con el índice doméstico, aunque de menor magnitud.
 
-### Regresion Logística Binaria 
+### Regresion Logística Binaria
 
 Modelo Logistico
 
@@ -498,7 +498,7 @@ PseudoR2(
 
 El modelo alcanza un Pseudo R² de McFadden de 0.065. Si bien este valor no es elevado, resulta habitual en modelos logísticos aplicados a fenómenos sociales complejos. Esto indica que las variables incorporadas explican una parte relevante, aunque no exhaustiva, de las diferencias observadas en la distribución del trabajo doméstico.
 
-### Grafico: probabilidades predichas 
+### Grafico: probabilidades predichas
 
 ```{r}
 pred_sexo <- ggpredict(
